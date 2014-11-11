@@ -11,25 +11,31 @@ public class Main {
     public static void main(String[] args) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance("SHA-256");
 
-        Map<BigInteger,Integer> map= new HashMap<>(9099999);
+        Map<Long, Integer> map = new HashMap<>(41729761);
         boolean found = false;
         byte[] digest;
         byte[] last50;
-        BigInteger bg;
         int i = 0;
-            while (!found) {
-                ++i;
-                md.update(String.valueOf(i).getBytes());
-                digest = md.digest();
-                last50 = Arrays.copyOfRange(digest, digest.length - 8, digest.length);
-                last50[0] = (byte) (last50[0] & 3);
-                bg = new BigInteger(last50);
+        int max = (int)Math.pow(2,30);
+        StringBuilder sb = new StringBuilder();
+        while (!found) {
+            sb.setLength(0);
+            ++i;
+            md.update(String.valueOf(i).getBytes());
+            digest = md.digest();
+            last50 = Arrays.copyOfRange(digest, digest.length - 8, digest.length);
+            last50[0]&=0;
+            last50[1]&=3;
+            ByteBuffer bb = ByteBuffer.wrap(last50);
+            long l = bb.getLong();
 
-                Integer val = map.put(bg,i);
-                if (val != null) {
-                    System.out.println(val + "same as " + i);
-                    System.out.println(Long.toBinaryString(bg.longValue()));
-                }
+            Integer val = map.put(l, i);
+            if (val != null) {
+                System.out.println(val + " same as " + i + " \t\t" + Long.toBinaryString(l));
             }
+
+        }
     }
 }
+//(30777358, 41729561)
+
